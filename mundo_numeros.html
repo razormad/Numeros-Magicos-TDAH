@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>🌟 Mundo Números</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTXVuZG8gTnVtZXJvcyIsInNob3J0X25hbWUiOiJOdW1lcm9zIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzY2N2VlYSIsInRoZW1lX2NvbG9yIjoiIzY2N2VlYSIsInN0YXJ0X3VybCI6Ii4ifQ==">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #ff6b6b;
+            --success: #6bcb77;
+            --warning: #ffe66d;
+            --info: #4ecdc4;
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --shadow: 0 8px 32px rgba(0,0,0,0.12);
+            --radius: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html, body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        /* ===== UTILIDADES ===== */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .w-full { width: 100%; }
+        .text-center { text-align: center; }
+        .p-4 { padding: 16px; }
+        .p-3 { padding: 12px; }
+        .rounded-2xl { border-radius: 16px; }
+        .rounded-3xl { border-radius: 24px; }
+        .shadow-lg { box-shadow: var(--shadow); }
+        .font-bold { font-weight: bold; }
+        .text-white { color: white; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .text-4xl { font-size: 2.25rem; }
+
+        /* ===== ANIMACIONES ===== */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.5); opacity: 0.3; }
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-bounce { animation: bounce 2s infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pop { animation: pop 0.5s ease-out; }
+        .animate-slide-up { animation: slideUp 0.5s ease-out; }
+
+        /* ===== PANTALLAS ===== */
+        .screen {
+            min-height: 100vh;
+            padding: 16px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen.active { display: flex; }
+
+        /* ===== COMPONENTES ===== */
+        .app-header {
+            text-align: center;
+            padding: 20px 10px;
+            color: white;
+        }
+        .app-header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .app-header p { opacity: 0.9; font-size: 1.1rem; margin-top: 5px; }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            touch-action: manipulation;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 52px;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: #333; }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-info { background: var(--info); color: white; }
+        .btn-outline { background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.4); }
+        .btn-lg { padding: 18px 32px; font-size: 1.25rem; min-height: 60px; }
+        .btn-xl { padding: 22px 40px; font-size: 1.4rem; min-height: 70px; width: 100%; max-width: 320px; }
+
+        .game-btn {
+            width: 100%;
+            max-width: 220px;
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 24px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: white;
+            color: var(--text);
+            position: relative;
+            overflow: hidden;
+        }
+        .game-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: var(--primary);
+        }
+        .game-btn:nth-child(2)::before { background: var(--success); }
+        .game-btn:nth-child(3)::before { background: var(--warning); }
+        .game-btn:nth-child(4)::before { background: var(--accent); }
+        .game-btn:nth-child(5)::before { background: var(--info); }
+        .game-btn:active { transform: scale(0.95); }
+        .game-btn .icon { font-size: 3rem; }
+
+        .option-btn {
+            width: 80px;
+            height: 80px;
+            border: none;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-btn:active { transform: scale(0.92); }
+        .opt-red { background: #ff6b6b; color: white; }
+        .opt-teal { background: #4ecdc4; color: white; }
+        .opt-yellow { background: #ffe66d; color: #333; }
+        .opt-green { background: #6bcb77; color: white; }
+        .opt-purple { background: #a18cd1; color: white; }
+        .opt-orange { background: #f093fb; color: white; }
+
+        .game-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: var(--shadow);
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: auto;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            width: 100%;
+        }
+        .toolbar .btn { min-height: 48px; padding: 10px 20px; font-size: 1rem; }
+
+        .stars-display { font-size: 2.5rem; margin: 10px 0; letter-spacing: 5px; }
+        .trophy-big { font-size: 5rem; animation: bounce 1.5s infinite; display: block; margin: 15px 0; }
+
+        .confetti-piece {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+            animation: breathe 4s ease-in-out infinite;
+            margin: 30px auto;
+        }
+
+        .fruit-item {
+            font-size: 2.5rem;
+            display: inline-block;
+            animation: float 2s ease-in-out infinite;
+        }
+        .fruit-item:nth-child(2n) { animation-delay: 0.3s; }
+        .fruit-item:nth-child(3n) { animation-delay: 0.6s; }
+
+        .shape-box {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .train-car {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .train-car.filled { background: var(--info); color: white; }
+        .train-car.empty { background: var(--warning); border: 3px dashed var(--accent); color: #333; animation: pulse 1.5s infinite; }
+        .train-car.correct { background: var(--success); animation: pop 0.5s; }
+        .train-car.wrong { background: var(--accent); animation: shake 0.5s; }
+
+        .arrow { font-size: 1.5rem; color: #a0aec0; }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .settings-row:last-child { border-bottom: none; }
+
+        .toggle {
+            width: 52px;
+            height: 30px;
+            background: #cbd5e0;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle.active { background: var(--success); }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle.active::after { transform: translateX(22px); }
+
+        .feedback-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-height: 36px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .feedback-good { color: var(--success); }
+        .feedback-wrong { color: var(--accent); }
+        .feedback-hint { color: var(--primary); }
+
+        .age-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .age-3 { background: #c6f6d5; color: #22543d; }
+        .age-5 { background: #feebc8; color: #744210; }
+        .age-7 { background: #fed7d7; color: #742a2a; }
+
+        .number-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .comparator-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 400px) {
+            .app-header h1 { font-size: 1.6rem; }
+            .game-btn { max-width: 160px; }
+            .game-btn .icon { font-size: 2.2rem; }
+            .option-btn { width: 68px; height: 68px; font-size: 1.5rem; }
+            .train-car { width: 48px; height: 48px; font-size: 1.2rem; }
+            .number-display { font-size: 3rem; }
+            .comparator-box { width: 80px; height: 80px; font-size: 2rem; }
+        }
+
+        /* Alto contraste */
+        body.high-contrast {
+            --primary: #000080;
+            --secondary: #000040;
+            --accent: #cc0000;
+            --success: #008000;
+            --warning: #ffcc00;
+            --info: #0066cc;
+            --bg: #ffffff;
+            --card: #ffffff;
+            --text: #000000;
+        }
+        body.high-contrast .card,
+        body.high-contrast .game-card {
+            border: 3px solid black;
+        }
+        body.high-contrast .option-btn,
+        body.high-contrast .btn {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== CONFETI CONTAINER ===== -->
+<div id="confetti-container"></div>
+
+<!-- ===== PANTALLA DE INICIO ===== -->
+<div id="screen-home" class="screen active">
+    <div class="app-header animate-float">
+        <div style="font-size: 4rem; margin-bottom: 10px;">🌈</div>
+        <h1>Mundo Números</h1>
+        <p>Aprender jugando, sin prisa</p>
+    </div>
+
+    <div class="card" style="margin-top: 10px;">
+        <div class="text-center" style="margin-bottom: 20px;">
+            <p style="color: var(--text-light); font-size: 1.1rem;">Elige cómo quieres jugar hoy:</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <button class="btn btn-xl btn-primary" onclick="goToMenu()">
+                <span>🎮</span> Jugar Ahora
+            </button>
+            <button class="btn btn-xl btn-outline" onclick="showScreen('screen-settings')">
+                <span>⚙️</span> Ajustes
+            </button>
+            <button class="btn btn-xl btn-outline" onclick="showBreathing()">
+                <span>🌿</span> Respiro
+            </button>
+        </div>
+
+        <div class="text-center" style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #e2e8f0;">
+            <p style="font-size: 0.9rem; color: var(--text-light);">
+                🏆 Estrellas ganadas: <span id="total-stars" class="font-bold text-lg" style="color: var(--warning);">0</span> ⭐
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MENÚ DE JUEGOS ===== -->
+<div id="screen-menu" class="screen">
+    <div class="app-header">
+        <button class="btn btn-outline" style="position: absolute; left: 16px; top: 16px; padding: 8px 16px; font-size: 0.9rem;" onclick="showScreen('screen-home')">← Volver</button>
+        <h1 style="margin-top: 10px;">🎮 Elige un Juego</h1>
+        <p>Toca el que más te guste</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 480px; padding: 0 10px;">
+        <button class="game-btn" onclick="startGame('train')">
+            <span class="icon">🚂</span>
+            <span>El Tren</span>
+            <span class="age-badge age-5">5-8 años</span>
+        </button>
+        <button class="game-btn" onclick="startGame('count')">
+            <span class="icon">🍎</span>
+            <span>Contar</span>
+            <span class="age-badge age-3">3-5 años</span>
+        </button>
+        <button class="game-btn" onclick="startGame('compare')">
+            <span class="icon">⚖️</span>
+            <span>Mayor o Menor</span>
+            <span class="age-badge age-5">5-7 años</span>
+        </button>
+        <button class="game-btn" onclick="startGame('add')">
+            <span class="icon">➕</span>
+            <span>Suma Mágica</span>
+            <span class="age-badge age-7">6-8 años</span>
+        </button>
+        <button class="game-btn" onclick="startGame('pattern')">
+            <span class="icon">🌈</span>
+            <span>Patrones</span>
+            <span class="age-badge age-3">3-6 años</span>
+        </button>
+        <button class="game-btn" onclick="startGame('memory')">
+            <span class="icon">🧠</span>
+            <span>Memoria</span>
+            <span class="age-badge age-5">5-8 años</span>
+        </button>
+    </div>
+</div>
+
+<!-- ===== PANTALLA DE JUEGO ===== -->
+<div id="screen-game" class="screen">
+    <div style="width: 100%; max-width: 540px; display: flex; justify-content: space-between; align-items: center; padding: 10px 5px;">
+        <button class="btn btn-outline" style="padding: 8px 14px; font-size: 0.9rem; min-height: 40px;" onclick="exitGame()">← Salir</button>
+        <div class="text-center">
+            <div style="font-size: 1.3rem; font-weight: bold; color: white;" id="game-title">Juego</div>
+            <div style="font-size: 0.85rem; opacity: 0.9; color: white;">Ronda <span id="game-round">1</span>/3 · ⭐ <span id="game-stars">0</span></div>
+        </div>
+        <button class="btn btn-outline" style="padding: 8px 14px; font-size: 0.9rem; min-height: 40px;" onclick="showBreathing()">🌿</button>
+    </div>
+
+    <div class="game-card" id="game-area">
+        <!-- Contenido dinámico -->
+    </div>
+
+    <div class="toolbar">
+        <button class="btn btn-warning" onclick="showHint()">💡 Pista</button>
+        <button class="btn btn-accent" onclick="skipExercise()">⏭️ Saltar</button>
+        <button class="btn btn-info" onclick="speakInstruction()">🔊 Escuchar</button>
+    </div>
+</div>
+
+<!-- ===== PANTALLA DE RESULTADO DE RONDA ===== -->
+<div id="screen-round-end" class="screen">
+    <div class="app-header">
+        <h1>¡Ronda Completada!</h1>
+    </div>
+    <div class="card text-center" style="max-width: 400px;">
+        <span class="trophy-big">🏆</span>
+        <div class="stars-display" id="round-stars"></div>
+        <p style="font-size: 1.2rem; color: var(--text-light); margin: 15px 0;" id="round-message">¡Excelente trabajo!</p>
+        <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 20px;">
+            <button class="btn btn-xl btn-primary" onclick="nextRound()">🚀 Siguiente Ronda</button>
+            <button class="btn btn-lg btn-outline" onclick="exitGame()">🏠 Volver al Menú</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PANTALLA FINAL ===== -->
+<div id="screen-final" class="screen">
+    <div class="app-header">
+        <h1>¡Eres un Campeón!</h1>
+    </div>
+    <div class="card text-center" style="max-width: 400px;">
+        <span class="trophy-big">🎉</span>
+        <div class="stars-display" id="final-stars">⭐⭐⭐</div>
+        <p style="font-size: 1.2rem; color: var(--text-light); margin: 15px 0;">¡Has completado todos los niveles!</p>
+        <div style="font-size: 1.5rem; margin: 20px 0; padding: 15px; background: var(--bg); border-radius: 16px;">
+            🏆 Total de estrellas: <span id="final-total-stars" class="font-bold" style="color: var(--warning);">0</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <button class="btn btn-xl btn-primary" onclick="exitGame()">🎮 Jugar Otro Juego</button>
+            <button class="btn btn-lg btn-outline" onclick="showScreen('screen-home')">🏠 Inicio</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== RESPIRO ===== -->
+<div id="screen-breathing" class="screen">
+    <div class="app-header">
+        <button class="btn btn-outline" style="position: absolute; left: 16px; top: 16px; padding: 8px 16px; font-size: 0.9rem;" onclick="closeBreathing()">← Volver</button>
+        <h1 style="margin-top: 20px;">🌿 Respiro</h1>
+        <p>Respira con el círculo</p>
+    </div>
+    <div class="card text-center" style="max-width: 350px; padding: 40px 20px;">
+        <div class="breathing-circle"></div>
+        <p style="font-size: 1.3rem; color: var(--text-light); margin-top: 20px;">
+            Inspira cuando crece...<br>
+            Expira cuando se encoge...
+        </p>
+        <button class="btn btn-lg btn-primary" style="margin-top: 30px;" onclick="closeBreathing()">✨ Listo, volver</button>
+    </div>
+</div>
+
+<!-- ===== AJUSTES ===== -->
+<div id="screen-settings" class="screen">
+    <div class="app-header">
+        <button class="btn btn-outline" style="position: absolute; left: 16px; top: 16px; padding: 8px 16px; font-size: 0.9rem;" onclick="showScreen('screen-home')">← Volver</button>
+        <h1 style="margin-top: 10px;">⚙️ Ajustes</h1>
+    </div>
+    <div class="card" style="max-width: 450px;">
+        <div class="settings-row">
+            <div>
+                <div class="font-bold">🔊 Sonidos</div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">Efectos al acertar</div>
+            </div>
+            <div class="toggle active" id="toggle-sound" onclick="toggleSetting('sound')"></div>
+        </div>
+        <div class="settings-row">
+            <div>
+                <div class="font-bold">🗣️ Voz</div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">Leer instrucciones en voz alta</div>
+            </div>
+            <div class="toggle active" id="toggle-voice" onclick="toggleSetting('voice')"></div>
+        </div>
+        <div class="settings-row">
+            <div>
+                <div class="font-bold">👁️ Alto Contraste</div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">Mejor para problemas visuales</div>
+            </div>
+            <div class="toggle" id="toggle-contrast" onclick="toggleSetting('contrast')"></div>
+        </div>
+        <div class="settings-row">
+            <div>
+                <div class="font-bold">🐢 Modo Tranquilo</div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">Menos animaciones</div>
+            </div>
+            <div class="toggle" id="toggle-calm" onclick="toggleSetting('calm')"></div>
+        </div>
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px dashed #e2e8f0;">
+            <button class="btn btn-accent w-full" style="margin-bottom: 10px;" onclick="resetProgress()">🗑️ Borrar Progreso</button>
+            <p style="font-size: 0.85rem; color: var(--text-light); text-align: center;">
+                Versión 1.0 · Sin internet · Sin anuncios
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIGURACIÓN Y ESTADO GLOBAL
+// ============================================================
+var state = {
+    totalStars: parseInt(localStorage.getItem('mn_stars') || '0'),
+    settings: {
+        sound: localStorage.getItem('mn_sound') !== 'false',
+        voice: localStorage.getItem('mn_voice') !== 'false',
+        contrast: localStorage.getItem('mn_contrast') === 'true',
+        calm: localStorage.getItem('mn_calm') === 'true'
+    },
+    currentGame: null,
+    currentRound: 1,
+    currentQuestion: 0,
+    score: 0,
+    answered: false,
+    gameData: {}
+};
+
+var GAMES = {
+    train: {
+        title: '🚂 El Tren',
+        instruction: '¿Qué número falta en el tren?',
+        rounds: 3,
+        questionsPerRound: 3,
+        minAge: 5
+    },
+    count: {
+        title: '🍎 Contar',
+        instruction: '¿Cuántas frutas hay?',
+        rounds: 3,
+        questionsPerRound: 3,
+        minAge: 3
+    },
+    compare: {
+        title: '⚖️ Mayor o Menor',
+        instruction: '¿Qué número es MAYOR?',
+        rounds: 3,
+        questionsPerRound: 3,
+        minAge: 5
+    },
+    add: {
+        title: '➕ Suma Mágica',
+        instruction: '¿Cuánto es en total?',
+        rounds: 3,
+        questionsPerRound: 3,
+        minAge: 6
+    },
+    pattern: {
+        title: '🌈 Patrones',
+        instruction: '¿Qué color sigue?',
+        rounds: 3,
+        questionsPerRound: 3,
+        minAge: 3
+    },
+    memory: {
+        title: '🧠 Memoria',
+        instruction: '¿Dónde estaba el número?',
+        rounds: 3,
+        questionsPerRound: 3,
+        minAge: 5
+    }
+};
+
+var FRUITS = ['🍎','🍌','🍇','🍊','🍓','🍐','🍑','🍉','🥝','🫐'];
+var COLORS = [
+    {name: 'rojo',   bg: '#ff6b6b', emoji: '🔴'},
+    {name: 'azul',   bg: '#4ecdc4', emoji: '🔵'},
+    {name: 'verde',  bg: '#6bcb77', emoji: '🟢'},
+    {name: 'amarillo',bg:'#ffe66d', emoji: '🟡'},
+    {name: 'morado', bg: '#a18cd1', emoji: '🟣'},
+    {name: 'naranja',bg: '#f093fb', emoji: '🟠'}
+];
+var GOOD_MESSAGES = ['¡Excelente!','¡Muy bien!','¡Genial!','¡Lo lograste!','¡Súper!','¡Increíble!','¡Eres el mejor!'];
+
+// ============================================================
+//  UTILIDADES
+// ============================================================
+function $(id) { return document.getElementById(id); }
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+function speak(text) {
+    if (!state.settings.voice || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'es-ES';
+    u.rate = 0.9;
+    u.pitch = 1.1;
+    window.speechSynthesis.speak(u);
+}
+function playSound(type) {
+    if (!state.settings.sound) return;
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'success') {
+            osc.frequency.setValueAtTime(523, ctx.currentTime);
+            osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.4);
+        } else if (type === 'wrong') {
+            osc.frequency.setValueAtTime(300, ctx.currentTime);
+            osc.frequency.setValueAtTime(250, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.3);
+        } else if (type === 'click') {
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.1);
+        }
+    } catch(e) {}
+}
+function confetti() {
+    var colors = ['#ff6b6b','#4ecdc4','#ffe66d','#6bcb77','#a18cd1','#f093fb'];
+    var container = $('confetti-container');
+    for (var i = 0; i < 25; i++) {
+        var el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        el.style.animationDelay = (Math.random() * 0.5) + 's';
+        container.appendChild(el);
+        setTimeout(function(e){ return function(){ if(e.parentNode) e.parentNode.removeChild(e); }; }(el), 4500);
+    }
+}
+
+// ============================================================
+//  NAVEGACIÓN
+// ============================================================
+function showScreen(id) {
+    playSound('click');
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    $(id).classList.add('active');
+    window.scrollTo(0,0);
+}
+function goToMenu() {
+    $('total-stars').textContent = state.totalStars;
+    showScreen('screen-menu');
+}
+function showBreathing() {
+    showScreen('screen-breathing');
+}
+function closeBreathing() {
+    if (state.currentGame) showScreen('screen-game');
+    else showScreen('screen-home');
+}
+
+// ============================================================
+//  AJUSTES
+// ============================================================
+function toggleSetting(key) {
+    playSound('click');
+    state.settings[key] = !state.settings[key];
+    localStorage.setItem('mn_' + key, state.settings[key]);
+    $('toggle-' + key).classList.toggle('active', state.settings[key]);
+
+    if (key === 'contrast') {
+        document.body.classList.toggle('high-contrast', state.settings.contrast);
+    }
+}
+function resetProgress() {
+    playSound('click');
+    if (confirm('¿Borrar todas las estrellas y progreso?')) {
+        state.totalStars = 0;
+        localStorage.removeItem('mn_stars');
+        $('total-stars').textContent = '0';
+        alert('Progreso borrado. ¡Empezamos de nuevo!');
+    }
+}
+function initSettings() {
+    document.body.classList.toggle('high-contrast', state.settings.contrast);
+    ['sound','voice','contrast','calm'].forEach(function(k){
+        $('toggle-' + k).classList.toggle('active', state.settings[k]);
+    });
+}
+
+// ============================================================
+//  SISTEMA DE JUEGO GENERAL
+// ============================================================
+function startGame(gameId) {
+    playSound('click');
+    var game = GAMES[gameId];
+    state.currentGame = gameId;
+    state.currentRound = 1;
+    state.currentQuestion = 0;
+    state.score = 0;
+    state.answered = false;
+    state.gameData = {};
+
+    $('game-title').textContent = game.title;
+    $('game-round').textContent = '1';
+    $('game-stars').textContent = '0';
+
+    showScreen('screen-game');
+    nextQuestion();
+}
+function exitGame() {
+    playSound('click');
+    state.currentGame = null;
+    showScreen('screen-menu');
+}
+function nextQuestion() {
+    state.answered = false;
+    var game = GAMES[state.currentGame];
+
+    if (state.currentQuestion >= game.questionsPerRound) {
+        showRoundEnd();
+        return;
+    }
+
+    $('game-round').textContent = state.currentRound;
+    $('game-stars').textContent = state.score;
+
+    var progress = (state.currentQuestion / game.questionsPerRound) * 100;
+
+    // Renderizar según el juego
+    var area = $('game-area');
+    area.innerHTML = '';
+
+    switch(state.currentGame) {
+        case 'train': renderTrainGame(area, progress); break;
+        case 'count': renderCountGame(area, progress); break;
+        case 'compare': renderCompareGame(area, progress); break;
+        case 'add': renderAddGame(area, progress); break;
+        case 'pattern': renderPatternGame(area, progress); break;
+        case 'memory': renderMemoryGame(area, progress); break;
+    }
+
+    speak(game.instruction);
+}
+function showRoundEnd() {
+    playSound('success');
+    confetti();
+
+    var stars = state.currentRound === 1 ? '⭐' : state.currentRound === 2 ? '⭐⭐' : '⭐⭐⭐';
+    $('round-stars').innerHTML = stars;
+
+    var msgs = ['¡Buen trabajo!','¡Estás mejorando!','¡Eres un experto!'];
+    $('round-message').textContent = msgs[Math.min(state.currentRound - 1, 2)];
+
+    showScreen('screen-round-end');
+}
+function nextRound() {
+    playSound('click');
+    var game = GAMES[state.currentGame];
+
+    if (state.currentRound >= game.rounds) {
+        state.totalStars += state.score;
+        localStorage.setItem('mn_stars', state.totalStars);
+        $('final-total-stars').textContent = state.totalStars;
+        confetti();
+        showScreen('screen-final');
+        return;
+    }
+
+    state.currentRound++;
+    state.currentQuestion = 0;
+    showScreen('screen-game');
+    nextQuestion();
+}
+function handleCorrect() {
+    if (state.answered) return;
+    state.answered = true;
+    state.score += 10;
+    playSound('success');
+    confetti();
+
+    var fb = document.createElement('div');
+    fb.className = 'feedback-text feedback-good animate-bounce';
+    fb.textContent = GOOD_MESSAGES[Math.floor(Math.random() * GOOD_MESSAGES.length)];
+    $('game-area').appendChild(fb);
+
+    setTimeout(function(){ state.currentQuestion++; nextQuestion(); }, 1800);
+}
+function handleWrong(el) {
+    if (state.answered) return;
+    playSound('wrong');
+    if (el) {
+        el.style.animation = 'shake 0.5s';
+        setTimeout(function(){ el.style.animation = ''; }, 500);
+    }
+    var fb = document.createElement('div');
+    fb.className = 'feedback-text feedback-wrong';
+    fb.textContent = '¡Casi! Intenta de nuevo 💪';
+    var existing = $('game-area').querySelector('.feedback-text');
+    if (existing) existing.remove();
+    $('game-area').appendChild(fb);
+}
+function showHint() {
+    playSound('click');
+    var fb = document.createElement('div');
+    fb.className = 'feedback-text feedback-hint';
+
+    switch(state.currentGame) {
+        case 'train':
+            var step = state.gameData.step || 1;
+            fb.textContent = 'Pista: van de +' + step + ' en +' + step;
+            break;
+        case 'count':
+            fb.textContent = 'Pista: cuenta una por una con el dedo';
+            break;
+        case 'compare':
+            fb.textContent = 'Pista: el número más grande gana';
+            break;
+        case 'add':
+            fb.textContent = 'Pista: junta los dos grupos en tu cabeza';
+            break;
+        case 'pattern':
+            fb.textContent = 'Pista: repite los colores en voz alta';
+            break;
+        case 'memory':
+            fb.textContent = 'Pista: fíjate bien en la posición';
+            break;
+    }
+    var existing = $('game-area').querySelector('.feedback-text');
+    if (existing) existing.remove();
+    $('game-area').appendChild(fb);
+    speak(fb.textContent);
+}
+function skipExercise() {
+    playSound('click');
+    if (state.answered) return;
+    state.answered = true;
+    var fb = document.createElement('div');
+    fb.className = 'feedback-text feedback-hint';
+    fb.textContent = '¡No pasa nada! Vamos con la siguiente';
+    var existing = $('game-area').querySelector('.feedback-text');
+    if (existing) existing.remove();
+    $('game-area').appendChild(fb);
+    setTimeout(function(){ state.currentQuestion++; nextQuestion(); }, 1500);
+}
+function speakInstruction() {
+    var game = GAMES[state.currentGame];
+    speak(game.instruction);
+}
+
+// ============================================================
+//  JUEGO 1: EL TREN (Series Numéricas)
+// ============================================================
+function renderTrainGame(container, progress) {
+    var steps = state.currentRound === 1 ? [1] : state.currentRound === 2 ? [2,3] : [5,10];
+    var step = steps[Math.floor(Math.random() * steps.length)];
+    var start = rand(1, state.currentRound === 3 ? 40 : 15);
+    var seq = [];
+    for (var i = 0; i < 4; i++) seq.push(start + i * step);
+    var missing = rand(1, 2);
+    var correct = seq[missing];
+    state.gameData.step = step;
+
+    var html = '<div style="width:100%;">';
+    html += '<div class="text-center" style="margin-bottom: 15px;"><span style="background:#e3f2fd; color:#1565c0; padding:8px 16px; border-radius:20px; font-size:0.95rem;">🔍 ' + GAMES.train.instruction + '</span></div>';
+    html += '<div style="display:flex; justify-content:center; align-items:center; gap:6px; flex-wrap:wrap; margin: 25px 0; min-height:70px;">';
+    for (var i = 0; i < seq.length; i++) {
+        if (i === missing) {
+            html += '<div class="train-car empty" id="train-missing">?</div>';
+        } else {
+            html += '<div class="train-car filled">' + seq[i] + '</div>';
+        }
+        if (i < seq.length - 1) html += '<div class="arrow">→</div>';
+    }
+    html += '</div>';
+    html += '<div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px;">';
+
+    var opts = [correct];
+    var attempts = 0;
+    while (opts.length < 4 && attempts < 50) {
+        attempts++;
+        var w = correct + rand(1, 6) * (Math.random() < 0.5 ? -1 : 1);
+        if (w > 0 && w !== correct && opts.indexOf(w) === -1) opts.push(w);
+    }
+    opts = shuffle(opts);
+
+    var colors = ['opt-red','opt-teal','opt-yellow','opt-green'];
+    for (var i = 0; i < opts.length; i++) {
+        html += '<button class="option-btn ' + colors[i] + '" onclick="trainAnswer(this,' + opts[i] + ',' + correct + ')">' + opts[i] + '</button>';
+    }
+    html += '</div></div>';
+    html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>';
+    container.innerHTML = html;
+}
+function trainAnswer(btn, val, correct) {
+    if (state.answered) return;
+    if (val === correct) {
+        $('train-missing').textContent = correct;
+        $('train-missing').classList.remove('empty');
+        $('train-missing').classList.add('correct');
+        handleCorrect();
+    } else {
+        handleWrong(btn);
+    }
+}
+
+// ============================================================
+//  JUEGO 2: CONTAR
+// ============================================================
+function renderCountGame(container, progress) {
+    var count = rand(1, state.currentRound === 1 ? 5 : state.currentRound === 2 ? 8 : 10);
+    var fruit = FRUITS[rand(0, FRUITS.length - 1)];
+    state.gameData.correct = count;
+
+    var html = '<div style="width:100%;">';
+    html += '<div class="text-center" style="margin-bottom: 15px;"><span style="background:#e3f2fd; color:#1565c0; padding:8px 16px; border-radius:20px; font-size:0.95rem;">🔍 ' + GAMES.count.instruction + '</span></div>';
+    html += '<div style="display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin: 30px 0; min-height:80px; max-width:320px;">';
+    for (var i = 0; i < count; i++) {
+        html += '<span class="fruit-item">' + fruit + '</span>';
+    }
+    html += '</div>';
+    html += '<div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px;">';
+
+    var opts = [count];
+    while (opts.length < 4) {
+        var w = rand(1, 10);
+        if (w !== count && opts.indexOf(w) === -1) opts.push(w);
+    }
+    opts = shuffle(opts);
+
+    var colors = ['opt-red','opt-teal','opt-yellow','opt-green'];
+    for (var i = 0; i < opts.length; i++) {
+        html += '<button class="option-btn ' + colors[i] + '" onclick="countAnswer(this,' + opts[i] + ',' + count + ')">' + opts[i] + '</button>';
+    }
+    html += '</div></div>';
+    html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>';
+    container.innerHTML = html;
+}
+function countAnswer(btn, val, correct) {
+    if (state.answered) return;
+    if (val === correct) {
+        handleCorrect();
+    } else {
+        handleWrong(btn);
+    }
+}
+
+// ============================================================
+//  JUEGO 3: MAYOR O MENOR
+// ============================================================
+function renderCompareGame(container, progress) {
+    var max = state.currentRound === 1 ? 10 : state.currentRound === 2 ? 20 : 50;
+    var a = rand(1, max);
+    var b = rand(1, max);
+    while (b === a) b = rand(1, max);
+    var isGreater = Math.random() < 0.5;
+    var correct = isGreater ? Math.max(a, b) : Math.min(a, b);
+    state.gameData.correct = correct;
+
+    var html = '<div style="width:100%;">';
+    html += '<div class="text-center" style="margin-bottom: 15px;"><span style="background:#e3f2fd; color:#1565c0; padding:8px 16px; border-radius:20px; font-size:0.95rem;">🔍 ' + (isGreater ? '¿Qué número es MAYOR?' : '¿Qué número es MENOR?') + '</span></div>';
+    html += '<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin: 30px 0;">';
+    html += '<div class="comparator-box" style="background: linear-gradient(135deg, #667eea, #764ba2);">' + a + '</div>';
+    html += '<div style="font-size:2.5rem; color:#a0aec0;">VS</div>';
+    html += '<div class="comparator-box" style="background: linear-gradient(135deg, #f093fb, #f5576c);">' + b + '</div>';
+    html += '</div>';
+    html += '<div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px;">';
+    var opts = shuffle([a, b]);
+    var colors = ['opt-purple','opt-orange'];
+    for (var i = 0; i < opts.length; i++) {
+        html += '<button class="option-btn ' + colors[i] + '" style="width:120px;" onclick="compareAnswer(this,' + opts[i] + ',' + correct + ')">' + opts[i] + '</button>';
+    }
+    html += '</div></div>';
+    html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>';
+    container.innerHTML = html;
+}
+function compareAnswer(btn, val, correct) {
+    if (state.answered) return;
+    if (val === correct) handleCorrect();
+    else handleWrong(btn);
+}
+
+// ============================================================
+//  JUEGO 4: SUMA MÁGICA
+// ============================================================
+function renderAddGame(container, progress) {
+    var max = state.currentRound === 1 ? 5 : state.currentRound === 2 ? 8 : 10;
+    var a = rand(1, max);
+    var b = rand(1, max);
+    var correct = a + b;
+    state.gameData.correct = correct;
+
+    var html = '<div style="width:100%;">';
+    html += '<div class="text-center" style="margin-bottom: 15px;"><span style="background:#e3f2fd; color:#1565c0; padding:8px 16px; border-radius:20px; font-size:0.95rem;">🔍 ' + GAMES.add.instruction + '</span></div>';
+    html += '<div style="display:flex; justify-content:center; align-items:center; gap:15px; margin: 25px 0; flex-wrap:wrap;">';
+    html += '<div class="text-center"><div style="font-size:2.5rem;">' + '👦'.repeat(a) + '</div><div style="font-size:1.5rem; font-weight:bold; color:var(--primary);">' + a + '</div></div>';
+    html += '<div style="font-size:2.5rem; color:var(--text-light);">+</div>';
+    html += '<div class="text-center"><div style="font-size:2.5rem;">' + '👧'.repeat(b) + '</div><div style="font-size:1.5rem; font-weight:bold; color:var(--accent);">' + b + '</div></div>';
+    html += '<div style="font-size:2.5rem; color:var(--text-light);">=</div>';
+    html += '<div style="font-size:3rem; color:var(--text-light);">?</div>';
+    html += '</div>';
+    html += '<div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px;">';
+
+    var opts = [correct];
+    while (opts.length < 4) {
+        var w = correct + rand(-3, 3);
+        if (w > 0 && w !== correct && opts.indexOf(w) === -1) opts.push(w);
+    }
+    opts = shuffle(opts);
+
+    var colors = ['opt-red','opt-teal','opt-yellow','opt-green'];
+    for (var i = 0; i < opts.length; i++) {
+        html += '<button class="option-btn ' + colors[i] + '" onclick="addAnswer(this,' + opts[i] + ',' + correct + ')">' + opts[i] + '</button>';
+    }
+    html += '</div></div>';
+    html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>';
+    container.innerHTML = html;
+}
+function addAnswer(btn, val, correct) {
+    if (state.answered) return;
+    if (val === correct) handleCorrect();
+    else handleWrong(btn);
+}
+
+// ============================================================
+//  JUEGO 5: PATRONES DE COLORES
+// ============================================================
+function renderPatternGame(container, progress) {
+    var patternLength = state.currentRound === 1 ? 3 : 4;
+    var pattern = [];
+    for (var i = 0; i < patternLength; i++) {
+        pattern.push(rand(0, 3));
+    }
+    var missingPos = rand(1, patternLength - 1);
+    var correct = pattern[missingPos];
+    state.gameData.correct = correct;
+
+    var html = '<div style="width:100%;">';
+    html += '<div class="text-center" style="margin-bottom: 15px;"><span style="background:#e3f2fd; color:#1565c0; padding:8px 16px; border-radius:20px; font-size:0.95rem;">🔍 ' + GAMES.pattern.instruction + '</span></div>';
+    html += '<div style="display:flex; justify-content:center; align-items:center; gap:10px; margin: 30px 0; flex-wrap:wrap;">';
+    for (var i = 0; i < pattern.length; i++) {
+        if (i === missingPos) {
+            html += '<div class="shape-box" style="background:#f0f0f0; border:3px dashed var(--accent); animation:pulse 1.5s infinite;">❓</div>';
+        } else {
+            var c = COLORS[pattern[i]];
+            html += '<div class="shape-box" style="background:' + c.bg + ';">' + c.emoji + '</div>';
+        }
+        if (i < pattern.length - 1) html += '<div class="arrow">→</div>';
+    }
+    html += '</div>';
+    html += '<div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px;">';
+
+    var opts = [correct];
+    while (opts.length < 4) {
+        var w = rand(0, 3);
+        if (w !== correct && opts.indexOf(w) === -1) opts.push(w);
+    }
+    opts = shuffle(opts);
+
+    for (var i = 0; i < opts.length; i++) {
+        var c = COLORS[opts[i]];
+        html += '<button class="option-btn" style="background:' + c.bg + '; color:white; font-size:2.2rem;" onclick="patternAnswer(this,' + opts[i] + ',' + correct + ')">' + c.emoji + '</button>';
+    }
+    html += '</div></div>';
+    html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>';
+    container.innerHTML = html;
+}
+function patternAnswer(btn, val, correct) {
+    if (state.answered) return;
+    if (val === correct) handleCorrect();
+    else handleWrong(btn);
+}
+
+// ============================================================
+//  JUEGO 6: MEMORIA (Números)
+// ============================================================
+function renderMemoryGame(container, progress) {
+    var positions = 4;
+    var targetPos = rand(0, positions - 1);
+    var targetNum = rand(1, 9);
+    state.gameData.targetNum = targetNum;
+    state.gameData.targetPos = targetPos;
+
+    var html = '<div style="width:100%;">';
+    html += '<div class="text-center" style="margin-bottom: 15px;"><span style="background:#e3f2fd; color:#1565c0; padding:8px 16px; border-radius:20px; font-size:0.95rem;">🔍 ' + GAMES.memory.instruction + '</span></div>';
+    html += '<div class="text-center" style="margin: 20px 0;"><div style="font-size:1.2rem; color:var(--text-light); margin-bottom:10px;">Memoriza dónde está el número <span style="font-size:2rem; font-weight:bold; color:var(--primary);">' + targetNum + '</span></div></div>';
+    html += '<div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin: 20px 0;">';
+
+    var cards = [];
+    for (var i = 0; i < positions; i++) {
+        if (i === targetPos) cards.push(targetNum);
+        else {
+            var n;
+            do { n = rand(1, 9); } while (n === targetNum);
+            cards.push(n);
+        }
+    }
+
+    for (var i = 0; i < positions; i++) {
+        html += '<div id="mem-card-' + i + '" class="shape-box" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color:white; font-size:2rem; cursor:pointer; transition:all 0.3s;" onclick="flipCard(this,' + i + ',' + cards[i] + ',' + targetNum + ')">?</div>';
+    }
+    html += '</div>';
+    html += '<div id="memory-options" style="display:none; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px;">';
+    for (var i = 0; i < positions; i++) {
+        html += '<button class="option-btn opt-teal" style="width:70px; height:70px; font-size:1.2rem;" onclick="memorySelect(' + i + ')">' + (i + 1) + '</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%"></div></div>';
+    container.innerHTML = html;
+
+    // Revelar por 2 segundos, luego ocultar
+    setTimeout(function() {
+        for (var i = 0; i < positions; i++) {
+            var card = $('mem-card-' + i);
+            if (card) card.textContent = '?';
+        }
+        var opts = $('memory-options');
+        if (opts) opts.style.display = 'flex';
+        speak('¿Dónde estaba el número ' + targetNum + '? Toca la posición correcta.');
+    }, 2000);
+
+    // Mostrar inicialmente
+    for (var i = 0; i < positions; i++) {
+        var card = $('mem-card-' + i);
+        if (card) card.textContent = cards[i];
+    }
+}
+function flipCard(el, pos, val, target) {
+    // Solo funciona durante la fase de revelación
+}
+function memorySelect(pos) {
+    if (state.answered) return;
+    if (pos === state.gameData.targetPos) {
+        var card = $('mem-card-' + pos);
+        if (card) {
+            card.textContent = state.gameData.targetNum;
+            card.style.background = 'var(--success)';
+        }
+        handleCorrect();
+    } else {
+        var card = $('mem-card-' + pos);
+        if (card) card.style.animation = 'shake 0.5s';
+        handleWrong(card);
+    }
+}
+
+// ============================================================
+//  INICIALIZAR
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    initSettings();
+    $('total-stars').textContent = state.totalStars;
+});
+</script>
+</body>
+</html>
